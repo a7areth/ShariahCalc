@@ -1,0 +1,26 @@
+# --- Secrets: never commit credentials ---
+# Firebase Admin SDK service account keys (private keys = full project admin access)
+*firebase-adminsdk*.json
+*serviceAccount*.json
+service-account*.json
+*.serviceaccount.json
+
+# Generic secret / credential files
+.env
+.env.*
+*.pem
+*.key
+secrets/
+credentials/
+
+# --- OS / editor cruft ---
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# --- Node (in case a build/deploy toolchain is added later) ---
+node_modules/
+dist/
+.firebase/
