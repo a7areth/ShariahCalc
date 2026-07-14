@@ -141,10 +141,65 @@
     .num{width:40px;height:40px;font-size:17px;}
     .case-head h2{font-size:17px;}
   }
+
+  /* ===== Slideshow chrome ===== */
+  .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;
+    justify-content:space-between;gap:14px;padding:11px 20px;
+    background:rgba(245,246,251,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);}
+  .topbar .brand{margin:0;font-size:12px;padding:4px 12px;}
+  .dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center;}
+  .dotp{width:9px;height:9px;padding:0;border:none;border-radius:50%;
+    background:var(--line);cursor:pointer;transition:all .25s ease;}
+  .dotp:hover{background:var(--gold-soft);}
+  .dotp.done{background:var(--green);}
+  .dotp.active{width:26px;border-radius:6px;background:var(--gold);}
+
+  .deck{max-width:860px;margin:0 auto;padding:26px 20px 128px;}
+  .slide{display:none;}
+  .slide.active{display:block;animation:slideIn .42s cubic-bezier(.2,.7,.2,1);}
+  @keyframes slideIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+  .intro-slide header{border-bottom:none;margin-bottom:0;padding-top:24px;}
+  .case-slide .case{margin:10px 0;box-shadow:0 14px 40px -22px rgba(27,31,77,.28);}
+  .case-slide .case-body.open-static{max-height:none;}
+  .case-slide .case-head{cursor:default;}
+  .slide-badge{display:inline-block;font-size:12px;font-weight:700;color:var(--gold);
+    background:var(--sand);border:1px solid var(--gold-soft);border-radius:30px;
+    padding:4px 14px;margin-bottom:2px;}
+  .calc-slide footer{margin-top:34px;}
+
+  .deck-nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;
+    align-items:center;justify-content:space-between;gap:12px;
+    max-width:860px;margin:0 auto;padding:12px 20px;
+    background:rgba(255,255,255,.94);backdrop-filter:blur(10px);
+    border-top:1px solid var(--line);}
+  .nav-btn{font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;
+    padding:10px 22px;border-radius:12px;border:1px solid var(--line);
+    background:var(--card);color:var(--green-deep);transition:all .18s ease;white-space:nowrap;}
+  .nav-btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold);}
+  .nav-btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;}
+  .nav-btn.primary:hover:not(:disabled){background:var(--brand-deep);border-color:var(--brand-deep);color:#fff;}
+  .nav-btn:disabled{opacity:.32;cursor:not-allowed;}
+  .nav-meta{text-align:center;line-height:1.35;min-width:0;}
+  .nav-meta .slide-name{display:block;font-size:14px;font-weight:700;color:var(--green-deep);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .nav-meta .counter{font-size:12px;color:var(--muted);}
+  @media (max-width:520px){
+    .nav-btn{padding:10px 16px;font-size:14px;}
+    .topbar .brand{display:none;}
+    .dots{justify-content:center;flex:1;}
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="topbar" id="topbar">
+  <span class="brand">دراهم · اللجنة الشرعية</span>
+  <div class="dots" id="progress"></div>
+</div>
+
+<div class="deck" id="deck">
+
+  <section class="slide intro-slide">
   <header>
     <span class="brand">دراهم · اللجنة الشرعية</span>
     <h1>زكاة الصناديق الاستثمارية</h1>
@@ -157,9 +212,10 @@
     <h3>المستثمر هو المُكلَّف شرعًا</h3>
     <p>إخراج زكاة الصندوق الاستثماري واجبٌ على المستثمر نفسه، ولا مانع أن يُفوِّض الشركة بإخراج الزكاة نيابةً عنه.</p>
   </div>
+  </section>
 
-  <div class="progress-bar" id="progress"></div>
-  <div id="cases"></div>
+  <section class="slide calc-slide" id="calcSlide">
+  <div class="slide-badge">الحاسبة التفاعلية · الخطوتان معًا</div>
 
   <div class="calc">
     <div class="calc-step">الخطوة ١</div>
@@ -209,7 +265,18 @@
       <b>تنبيه:</b> هذا الدليل صياغة تفاعلية لمضمون قرار اللجنة الشرعية رقم (١٠) المرفق، والغرض منه التوضيح والتبسيط. القرار خاصٌّ باستثمارات الأفراد غير المكلَّفين بالزكاة من الجهة المختصة. عند التطبيق العملي يُرجع للنص الأصلي ولمختصٍّ شرعي. نسبة الزكاة (٢.٥٪) وطريقتها مبنية على نص القرار، وقد تُعيد اللجنة النظر في بعض النِّسب سنويًا كما ورد في القرار نفسه.
     </div>
   </footer>
-</div>
+  </section>
+
+</div><!-- /deck -->
+
+<nav class="deck-nav">
+  <button class="nav-btn" id="prevBtn" type="button">السابق&nbsp;›</button>
+  <div class="nav-meta">
+    <span class="slide-name" id="slideName"></span>
+    <span class="counter" id="counter"></span>
+  </div>
+  <button class="nav-btn primary" id="nextBtn" type="button">‹&nbsp;التالي</button>
+</nav>
 
 <script>
 const cases=[
@@ -256,49 +323,87 @@ const cases=[
   why:'العقار المُدرّ للدخل يُزكّى على غلّته (توزيعاته) لا على قيمته الرأسمالية.'}
 ];
 
-const casesEl=document.getElementById('cases');
-const progressEl=document.getElementById('progress');
+// ── Build one slide per case, inserted before the calculator slide ──
+const deck=document.getElementById('deck');
+const calcSlide=document.getElementById('calcSlide');
 const pillClass={yes:'v-yes',no:'v-no',rule:'v-rule'};
-cases.forEach((c,i)=>{
-  const card=document.createElement('div');
-  card.className='case'; card.id='case-'+i;
+cases.forEach((c)=>{
   const rulesHTML=c.rules.map(r=>`<div class="rule-block"><h4>${r.h}</h4><p>${r.p}</p></div>`).join('');
   const formulaHTML=c.formula?`<div class="formula">${c.formula}</div>`:'';
   const whyHTML=c.why?`<div class="why"><span>لماذا؟</span> ${c.why}</div>`:'';
-  card.innerHTML=`
-    <div class="case-head" data-i="${i}">
-      <div class="num">${c.n}</div>
-      <div class="title"><div class="kicker">${c.kicker}</div><h2>${c.title}</h2></div>
-      <span class="verdict-pill ${pillClass[c.verdict]}">${c.pill}</span>
-      <span class="chev">&#9662;</span>
-    </div>
-    <div class="case-body"><div class="case-body-inner">
-      <div class="fund-example">${c.example}</div>${rulesHTML}${formulaHTML}${whyHTML}
-    </div></div>`;
-  casesEl.appendChild(card);
-  const dot=document.createElement('div');
-  dot.className='dot'; dot.textContent=c.n; dot.dataset.i=i;
+  const slide=document.createElement('section');
+  slide.className='slide case-slide';
+  slide.dataset.name='القاعدة ('+c.kicker+')';
+  slide.innerHTML=`
+    <div class="case open">
+      <div class="case-head">
+        <div class="num">${c.n}</div>
+        <div class="title"><div class="kicker">${c.kicker}</div><h2>${c.title}</h2></div>
+        <span class="verdict-pill ${pillClass[c.verdict]}">${c.pill}</span>
+      </div>
+      <div class="case-body open-static"><div class="case-body-inner">
+        <div class="fund-example">${c.example}</div>${rulesHTML}${formulaHTML}${whyHTML}
+      </div></div>
+    </div>`;
+  deck.insertBefore(slide,calcSlide);
+});
+
+// ── Slideshow navigation controller ──
+const slides=[...document.querySelectorAll('.slide')];
+const progressEl=document.getElementById('progress');
+const prevBtn=document.getElementById('prevBtn');
+const nextBtn=document.getElementById('nextBtn');
+const counterEl=document.getElementById('counter');
+const slideNameEl=document.getElementById('slideName');
+const arNum=n=>Number(n).toLocaleString('ar-SA');
+let idx=0;
+
+slides.forEach((s,i)=>{
+  if(!s.dataset.name){
+    if(s.classList.contains('intro-slide'))s.dataset.name='المقدمة';
+    else if(s.classList.contains('calc-slide'))s.dataset.name='الحاسبة';
+  }
+  const dot=document.createElement('button');
+  dot.type='button'; dot.className='dotp';
+  dot.title=s.dataset.name; dot.setAttribute('aria-label',s.dataset.name);
+  dot.addEventListener('click',()=>go(i));
   progressEl.appendChild(dot);
 });
-function setActive(i){
-  document.querySelectorAll('.dot').forEach(d=>d.classList.remove('active'));
-  const dots=document.querySelectorAll('.dot');
-  if(dots[i])dots[i].classList.add('active');
-  if(dots[i])dots[i].classList.add('done');
+const dots=[...progressEl.children];
+
+function go(i){
+  idx=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===idx));
+  dots.forEach((d,k)=>{d.classList.toggle('active',k===idx);d.classList.toggle('done',k<idx);});
+  counterEl.textContent=arNum(idx+1)+' / '+arNum(slides.length);
+  slideNameEl.textContent=slides[idx].dataset.name||'';
+  prevBtn.disabled=idx===0;
+  nextBtn.disabled=idx===slides.length-1;
+  nextBtn.innerHTML=idx===slides.length-2?'‹&nbsp;الحاسبة':'‹&nbsp;التالي';
+  window.scrollTo({top:0,behavior:'smooth'});
 }
-function toggle(i){
-  const card=document.getElementById('case-'+i);
-  const body=card.querySelector('.case-body');
-  const isOpen=card.classList.contains('open');
-  document.querySelectorAll('.case').forEach(c=>{c.classList.remove('open');c.querySelector('.case-body').style.maxHeight=null;});
-  if(!isOpen){card.classList.add('open');body.style.maxHeight=body.scrollHeight+'px';setActive(i);}
-}
-document.querySelectorAll('.case-head').forEach(h=>h.addEventListener('click',()=>toggle(+h.dataset.i)));
-document.querySelectorAll('.dot').forEach(d=>d.addEventListener('click',()=>{
-  const i=+d.dataset.i; toggle(i);
-  document.getElementById('case-'+i).scrollIntoView({behavior:'smooth',block:'center'});
-}));
-toggle(0);
+const next=()=>{if(idx<slides.length-1)go(idx+1);};
+const prev=()=>{if(idx>0)go(idx-1);};
+nextBtn.addEventListener('click',next);
+prevBtn.addEventListener('click',prev);
+document.addEventListener('keydown',e=>{
+  const t=e.target.tagName;
+  if(t==='INPUT'||t==='SELECT'||t==='TEXTAREA')return;
+  if(e.key==='ArrowLeft'||e.key===' '||e.key==='PageDown'){e.preventDefault();next();}
+  else if(e.key==='ArrowRight'||e.key==='PageUp'){e.preventDefault();prev();}
+  else if(e.key==='Home'){e.preventDefault();go(0);}
+  else if(e.key==='End'){e.preventDefault();go(slides.length-1);}
+});
+// touch swipe (RTL: swipe left → next)
+let tx=null;
+deck.addEventListener('touchstart',e=>{tx=e.changedTouches[0].clientX;},{passive:true});
+deck.addEventListener('touchend',e=>{
+  if(tx===null)return;
+  const dx=e.changedTouches[0].clientX-tx; tx=null;
+  if(Math.abs(dx)<50)return;
+  if(dx<0)next(); else prev();
+});
+go(0);
 
 const assetType=document.getElementById('assetType');
 const stockOptions=document.getElementById('stockOptions');
