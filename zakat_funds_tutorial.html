@@ -270,12 +270,12 @@
 </div><!-- /deck -->
 
 <nav class="deck-nav">
-  <button class="nav-btn" id="prevBtn" type="button">السابق&nbsp;›</button>
+  <button class="nav-btn" id="prevBtn" type="button">السابق&nbsp;‹</button>
   <div class="nav-meta">
     <span class="slide-name" id="slideName"></span>
     <span class="counter" id="counter"></span>
   </div>
-  <button class="nav-btn primary" id="nextBtn" type="button">‹&nbsp;التالي</button>
+  <button class="nav-btn primary" id="nextBtn" type="button">›&nbsp;التالي</button>
 </nav>
 
 <script>
@@ -379,7 +379,7 @@ function go(i){
   slideNameEl.textContent=slides[idx].dataset.name||'';
   prevBtn.disabled=idx===0;
   nextBtn.disabled=idx===slides.length-1;
-  nextBtn.innerHTML=idx===slides.length-2?'‹&nbsp;الحاسبة':'‹&nbsp;التالي';
+  nextBtn.innerHTML=idx===slides.length-2?'›&nbsp;الحاسبة':'›&nbsp;التالي';
   window.scrollTo({top:0,behavior:'smooth'});
 }
 const next=()=>{if(idx<slides.length-1)go(idx+1);};
